@@ -10,6 +10,10 @@
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
+- (IBAction)startRecording:(id)sender;
+- (IBAction)pauseRecording:(id)sender;
+- (IBAction)resumeRecording:(id)sender;
+- (IBAction)stopRecording:(id)sender;
 
 @end
 

@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "CameraEngine.h"
 
 @interface AppDelegate ()
 
@@ -17,6 +18,7 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
+    [[CameraEngine engine] startup];
 }
 
 
@@ -24,5 +26,19 @@
     // Insert code here to tear down your application
 }
 
+- (IBAction)startRecording:(id)sender {
+    [[CameraEngine engine] startCapture];
+}
 
+- (IBAction)pauseRecording:(id)sender {
+     [[CameraEngine engine] pauseCapture];
+}
+
+- (IBAction)resumeRecording:(id)sender {
+    [[CameraEngine engine] resumeCapture];
+}
+
+- (IBAction)stopRecording:(id)sender {
+    [[CameraEngine engine] stopCapture];
+}
 @end

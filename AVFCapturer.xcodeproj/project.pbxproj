@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		848EE5851FAC154A00DA1E43 /* CameraEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 848EE5841FAC154A00DA1E43 /* CameraEngine.m */; };
+		848EE58B1FAC195400DA1E43 /* VideoEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 848EE58A1FAC195400DA1E43 /* VideoEncoder.m */; };
+		848EE58E1FAC352500DA1E43 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848EE58D1FAC352500DA1E43 /* AVFoundation.framework */; };
 		8497609B1FAC0BF80044C681 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8497609A1FAC0BF80044C681 /* AppDelegate.m */; };
 		8497609E1FAC0BF80044C681 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8497609D1FAC0BF80044C681 /* main.m */; };
 		849760A01FAC0BF80044C681 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8497609F1FAC0BF80044C681 /* Assets.xcassets */; };
@@ -17,6 +19,9 @@
 /* Begin PBXFileReference section */
 		848EE5831FAC154A00DA1E43 /* CameraEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraEngine.h; sourceTree = "<group>"; };
 		848EE5841FAC154A00DA1E43 /* CameraEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraEngine.m; sourceTree = "<group>"; };
+		848EE5891FAC195400DA1E43 /* VideoEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoEncoder.h; sourceTree = "<group>"; };
+		848EE58A1FAC195400DA1E43 /* VideoEncoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoEncoder.m; sourceTree = "<group>"; };
+		848EE58D1FAC352500DA1E43 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		849760961FAC0BF80044C681 /* AVFCapturer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AVFCapturer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		849760991FAC0BF80044C681 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		8497609A1FAC0BF80044C681 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -31,17 +36,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				848EE58E1FAC352500DA1E43 /* AVFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		848EE58C1FAC352500DA1E43 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				848EE58D1FAC352500DA1E43 /* AVFoundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		8497608D1FAC0BF80044C681 = {
 			isa = PBXGroup;
 			children = (
 				849760981FAC0BF80044C681 /* AVFCapturer */,
 				849760971FAC0BF80044C681 /* Products */,
+				848EE58C1FAC352500DA1E43 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -56,14 +71,16 @@
 		849760981FAC0BF80044C681 /* AVFCapturer */ = {
 			isa = PBXGroup;
 			children = (
+				848EE5891FAC195400DA1E43 /* VideoEncoder.h */,
+				848EE58A1FAC195400DA1E43 /* VideoEncoder.m */,
 				849760991FAC0BF80044C681 /* AppDelegate.h */,
 				8497609A1FAC0BF80044C681 /* AppDelegate.m */,
+				848EE5831FAC154A00DA1E43 /* CameraEngine.h */,
+				848EE5841FAC154A00DA1E43 /* CameraEngine.m */,
 				8497609F1FAC0BF80044C681 /* Assets.xcassets */,
 				849760A11FAC0BF80044C681 /* MainMenu.xib */,
 				849760A41FAC0BF80044C681 /* Info.plist */,
 				8497609C1FAC0BF80044C681 /* Supporting Files */,
-				848EE5831FAC154A00DA1E43 /* CameraEngine.h */,
-				848EE5841FAC154A00DA1E43 /* CameraEngine.m */,
 			);
 			path = AVFCapturer;
 			sourceTree = "<group>";
@@ -146,6 +163,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				848EE58B1FAC195400DA1E43 /* VideoEncoder.m in Sources */,
 				8497609E1FAC0BF80044C681 /* main.m in Sources */,
 				848EE5851FAC154A00DA1E43 /* CameraEngine.m in Sources */,
 				8497609B1FAC0BF80044C681 /* AppDelegate.m in Sources */,
