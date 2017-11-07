@@ -21,9 +21,14 @@
     [[CameraEngine engine] startup];
 }
 
+-(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender {
+    return YES;
+}
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
     // Insert code here to tear down your application
+    [[CameraEngine engine] stopCapture];
+    [[CameraEngine engine] shutdown];
 }
 
 - (IBAction)startRecording:(id)sender {

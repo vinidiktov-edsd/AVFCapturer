@@ -46,6 +46,8 @@
     _audioInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio outputSettings:settings];
     _audioInput.expectsMediaDataInRealTime = YES;
     [_writer addInput:_audioInput];
+    
+    //[_writer setMovieFragmentInterval:CMTimeMake(10, 1)];
 }
 
 - (void) finishWithCompletionHandler:(void (^)(void))handler

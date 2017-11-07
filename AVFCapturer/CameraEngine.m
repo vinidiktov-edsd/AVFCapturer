@@ -91,21 +91,23 @@ static CameraEngine* theEngine;
         videoout.videoSettings = setcapSettings;
         [_session addOutput:videoout];
         _videoConnection = [videoout connectionWithMediaType:AVMediaTypeVideo];
+
         // find the actual dimensions used so we can set up the encoder to the same.
-        NSDictionary* actual = videoout.videoSettings;
-        _cy = 720;
-        _cx = 1280;
-//        _cy = [[actual objectForKey:@"Height"] integerValue];
-//        _cx = [[actual objectForKey:@"Width"] integerValue];
-//        
+        CMFormatDescriptionRef formatDescription = backCamera.activeFormat.formatDescription;
+        CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription);
+        CGSize resolution = CGSizeMake((CGFloat)dimensions.width, (CGFloat)dimensions.height);
+        
+        _cy = resolution.height;
+        _cx = resolution.width;
+        
         AVCaptureAudioDataOutput* audioout = [[AVCaptureAudioDataOutput alloc] init];
         [audioout setSampleBufferDelegate:self queue:_captureQueue];
         [_session addOutput:audioout];
         _audioConnection = [audioout connectionWithMediaType:AVMediaTypeAudio];
-        // for audio, we want the channels and sample rate, but we can't get those from audioout.audiosettings on ios, so
+        // for audio, we want the channels and sample rate, but we can't get those from audioout.audiosettings, so
         // we need to wait for the first sample
         
-        // start capture and a preview layer
+        // start capture
         [_session startRunning];
     }
 }
@@ -305,5 +307,23 @@ static CameraEngine* theEngine;
     [_encoder finishWithCompletionHandler:^{
         NSLog(@"Capture completed");
     }];
+}
+
+NSURL *currentMovieURLForAddress(NSString *dbFilename, NSString *cameraAddress)
+{
+    char timestampBuf[128] = {0};
+    
+    time_t curTime = time(NULL);
+    struct tm *ltime = localtime(&curTime);
+    strftime(timestampBuf, sizeof timestampBuf, "%Y-%m-%d__%H-%M-%S", ltime);
+    
+    cameraAddress = [cameraAddress stringByReplacingOccurrencesOfString:@"@" withString:@"_"];
+    cameraAddress = [cameraAddress stringByReplacingOccurrencesOfString:@":" withString:@"_"];
+    cameraAddress = [cameraAddress stringByReplacingOccurrencesOfString:@"/" withString:@""];
+    
+    NSString *movieDir = [dbFilename stringByDeletingLastPathComponent];
+    NSString *filename = [NSString stringWithFormat:@"%@__%s.mov", cameraAddress, timestampBuf];
+    
+    return [NSURL fileURLWithPath:[movieDir stringByAppendingPathComponent:filename]];
 }
 @end
