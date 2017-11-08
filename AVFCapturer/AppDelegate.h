@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "AVSegmentingAppleEncoder.h"
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 

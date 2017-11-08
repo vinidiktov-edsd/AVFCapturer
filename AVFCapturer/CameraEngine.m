@@ -229,7 +229,7 @@ static CameraEngine* theEngine;
             [self setAudioFormat:fmt];
             NSString* filename = [NSString stringWithFormat:@"capture%d.mp4", _currentFile];
             NSString* path = [[self getDesktopDirectoryPath] stringByAppendingPathComponent:filename];
-            _encoder = [VideoEncoder encoderForPath:path Height:_cy width:_cx channels:_channels samples:_samplerate];
+            _encoder = [VideoEncoder encoderForPath:path Height:_cy width:_cx channels:_channels samples:_samplerate queue:_captureQueue];
         }
         if (_discont)
         {

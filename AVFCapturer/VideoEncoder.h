@@ -19,15 +19,36 @@
     AVAssetWriterInput* _videoInput;
     AVAssetWriterInput* _audioInput;
     NSString* _path;
+    
+    NSURL* _currentFileURL;
+    
+    AVAssetWriter* _queuedWriter;
+    AVAssetWriterInput* _queuedVideoInput;
+    AVAssetWriterInput* _queuedAudioInput;
+    
+    NSURL* _queuedFileURL;
+    
+    int _cx;
+    int _cy;
+    Float64 _rate;
+    int _ch;
+    
+    dispatch_queue_t _captureQueue;
 }
 
 @property NSString* path;
+@property (nonatomic, retain) NSTimer *segmentationTimer;
 
-+ (VideoEncoder*) encoderForPath:(NSString*) path Height:(int) cy width:(int) cx channels: (int) ch samples:(Float64) rate;
 
-- (void) initPath:(NSString*)path Height:(int) cy width:(int) cx channels: (int) ch samples:(Float64) rate;
++ (VideoEncoder*) encoderForPath:(NSString*) path Height:(int) cy width:(int) cx channels: (int) ch samples:(Float64) rate queue:(dispatch_queue_t) queue;
+
+- (void) initPath:(NSString*)path Height:(int) cy width:(int) cx channels: (int) ch samples:(Float64) rate  queue:(dispatch_queue_t) queue;
 - (void) finishWithCompletionHandler:(void (^)(void))handler;
 - (BOOL) encodeFrame:(CMSampleBufferRef) sampleBuffer isVideo:(BOOL) bVideo;
+- (void)doSegmentation:(NSTimer *)timer;
+-(NSURL *)nextFileURL;
+-(void)startSegmentationTimer;
+- (void) showError:(NSError*)error;
 
 
 @end

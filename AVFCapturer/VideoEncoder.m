@@ -12,22 +12,30 @@
 
 @synthesize path = _path;
 
-+ (VideoEncoder*) encoderForPath:(NSString*) path Height:(int) cy width:(int) cx channels: (int) ch samples:(Float64) rate;
++ (VideoEncoder*) encoderForPath:(NSString*) path Height:(int) cy width:(int) cx channels: (int) ch samples:(Float64) rate queue: (dispatch_queue_t) queue
 {
     VideoEncoder* enc = [VideoEncoder alloc];
-    [enc initPath:path Height:cy width:cx channels:ch samples:rate];
+    [enc initPath:path Height:cy width:cx channels:ch samples:rate queue:queue];
     return enc;
 }
 
 
-- (void) initPath:(NSString*)path Height:(int) cy width:(int) cx channels: (int) ch samples:(Float64) rate;
+- (void) initPath:(NSString*)path Height:(int) cy width:(int) cx channels: (int) ch samples:(Float64) rate
+            queue:(dispatch_queue_t) queue
 {
     self.path = path;
     
-    [[NSFileManager defaultManager] removeItemAtPath:self.path error:nil];
-    NSURL* url = [NSURL fileURLWithPath:self.path];
+    _cx = cx;
+    _cy = cy;
+    _ch = ch;
+    _rate = rate;
+    _captureQueue = queue;
     
-    _writer = [AVAssetWriter assetWriterWithURL:url fileType:AVFileTypeQuickTimeMovie error:nil];
+    
+    //[[NSFileManager defaultManager] removeItemAtPath:self.path error:nil];
+    //NSURL* url = [NSURL fileURLWithPath:self.path];
+    
+    _writer = [AVAssetWriter assetWriterWithURL:[self nextFileURL] fileType:AVFileTypeQuickTimeMovie error:nil];
     NSDictionary* settings = [NSDictionary dictionaryWithObjectsAndKeys:
                               AVVideoCodecH264, AVVideoCodecKey,
                               [NSNumber numberWithInt: cx], AVVideoWidthKey,
@@ -64,6 +72,12 @@
             CMTime startTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
             [_writer startWriting];
             [_writer startSessionAtSourceTime:startTime];
+            if (!self.segmentationTimer) {
+                [self startSegmentationTimer];
+            } else {
+                [self showError:[_writer error]];
+            }
+            [self setupQueuedAssetWriter];
         }
         if (_writer.status == AVAssetWriterStatusFailed)
         {
@@ -90,4 +104,97 @@
     return NO;
 }
 
+- (void)setupQueuedAssetWriter
+{
+    dispatch_async(_captureQueue, ^{
+        NSLog(@"Setting up queued asset writer...");
+        _queuedFileURL = [self nextFileURL];
+        _queuedWriter = [AVAssetWriter assetWriterWithURL:_queuedFileURL fileType:AVFileTypeQuickTimeMovie error:nil];
+        
+//        self.path = path;
+        
+//        [[NSFileManager defaultManager] removeItemAtPath:self.path error:nil];
+//        NSURL* url = [NSURL fileURLWithPath:self.path];
+        
+//        _writer = [AVAssetWriter assetWriterWithURL:url fileType:AVFileTypeQuickTimeMovie error:nil];
+        NSDictionary* settings = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  AVVideoCodecH264, AVVideoCodecKey,
+                                  [NSNumber numberWithInt: _cx], AVVideoWidthKey,
+                                  [NSNumber numberWithInt: _cy], AVVideoHeightKey,
+                                  nil];
+        _queuedVideoInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:settings];
+        _queuedVideoInput.expectsMediaDataInRealTime = YES;
+        [_queuedWriter addInput:_queuedVideoInput];
+        
+        settings = [NSDictionary dictionaryWithObjectsAndKeys:
+                    [ NSNumber numberWithInt: kAudioFormatMPEG4AAC], AVFormatIDKey,
+                    [ NSNumber numberWithInt: _ch], AVNumberOfChannelsKey,
+                    [ NSNumber numberWithFloat: _rate], AVSampleRateKey,
+                    [ NSNumber numberWithInt: 64000 ], AVEncoderBitRateKey,
+                    nil];
+        _queuedAudioInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio outputSettings:settings];
+        _queuedAudioInput.expectsMediaDataInRealTime = YES;
+        [_queuedWriter addInput:_queuedAudioInput];
+
+    });
+}
+
+- (void)doSegmentation:(NSTimer *)timer
+{
+    NSLog(@"Segmenting...");
+    AVAssetWriter *writer = _writer;
+    AVAssetWriterInput *audioIn = _audioInput;
+    AVAssetWriterInput *videoIn = _videoInput;
+    NSURL *fileURL = _currentFileURL;
+    
+    //[avCaptureSession beginConfiguration];
+    @synchronized(self) {
+        _writer = _queuedWriter;
+        _audioInput = _queuedAudioInput;
+        _videoInput = _queuedVideoInput;
+    }
+    //[avCaptureSession commitConfiguration];
+    _currentFileURL = _queuedFileURL;
+    
+    dispatch_async(_captureQueue, ^{
+        [audioIn markAsFinished];
+        [videoIn markAsFinished];
+        [writer finishWritingWithCompletionHandler:^{
+            if (writer.status == AVAssetWriterStatusCompleted ) {
+                int i = 0;
+                //[fileURLs addObject:fileURL];
+            } else {
+                NSLog(@"...WARNING: could not close segment");
+            }
+        }];
+    });
+}
+
+-(void)startSegmentationTimer {
+    self.segmentationTimer = [NSTimer timerWithTimeInterval:(NSTimeInterval)10.0 target:self selector:@selector(doSegmentation:) userInfo:nil repeats:YES];
+    [[NSRunLoop mainRunLoop] addTimer:self.segmentationTimer forMode:NSDefaultRunLoopMode];
+}
+
+-(NSURL *)nextFileURL {
+    int FILE_NUMBER = 1;
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *basePath = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
+    NSString *movieName = [NSString stringWithFormat:@"%d.%f.mp4", FILE_NUMBER, [[NSDate date] timeIntervalSince1970]];
+    NSURL *newMovieURL = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/%@", basePath, movieName]];
+    //fileNumber++;
+    return newMovieURL;
+}
+
+- (void) dealloc {
+    if (self.segmentationTimer) {
+        [self.segmentationTimer invalidate];
+        self.segmentationTimer = nil;
+    }
+}
+
+
+- (void) showError:(NSError*)error {
+    NSLog(@"Error: %@%@", [error localizedDescription], [error userInfo]);
+}
 @end

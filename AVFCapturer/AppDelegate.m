@@ -19,6 +19,7 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
     [[CameraEngine engine] startup];
+//    self.segmentingEncoder =  [[AVSegmentingAppleEncoder alloc] initWithURL:nil segmentationInterval:(NSTimeInterval)10.0];
 }
 
 -(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender {
