@@ -37,7 +37,12 @@
 }
 
 @property NSString* path;
-@property (nonatomic, retain) NSTimer *segmentationTimer;
+@property long   recordingStartTimeNS;
+@property double startSegmentOutputPresentationTime;
+@property double prevStartSegmentOutputPresentationTime;
+@property double endSegmentOutputPresentationTime;
+
+@property int fragmentLength;
 
 
 + (VideoEncoder*) encoderForPath:(NSString*) path Height:(int) cy width:(int) cx channels: (int) ch samples:(Float64) rate queue:(dispatch_queue_t) queue;
@@ -45,9 +50,9 @@
 - (void) initPath:(NSString*)path Height:(int) cy width:(int) cx channels: (int) ch samples:(Float64) rate  queue:(dispatch_queue_t) queue;
 - (void) finishWithCompletionHandler:(void (^)(void))handler;
 - (BOOL) encodeFrame:(CMSampleBufferRef) sampleBuffer isVideo:(BOOL) bVideo;
-- (void)doSegmentation:(NSTimer *)timer;
--(NSURL *)nextFileURL;
--(void)startSegmentationTimer;
+- (void)doSegmentation;
+- (NSURL *)nextFileURL;
+- (void)startSegmentationTimer;
 - (void) showError:(NSError*)error;
 
 

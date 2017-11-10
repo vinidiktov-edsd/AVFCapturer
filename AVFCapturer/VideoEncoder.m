@@ -8,6 +8,9 @@
 
 #import "VideoEncoder.h"
 
+static double firstPresentationTime = -1;
+static const int kMovieFragmentLength  = 10;
+
 @implementation VideoEncoder
 
 @synthesize path = _path;
@@ -16,6 +19,7 @@
 {
     VideoEncoder* enc = [VideoEncoder alloc];
     [enc initPath:path Height:cy width:cx channels:ch samples:rate queue:queue];
+    enc.fragmentLength = kMovieFragmentLength;
     return enc;
 }
 
@@ -55,7 +59,7 @@
     _audioInput.expectsMediaDataInRealTime = YES;
     [_writer addInput:_audioInput];
     
-    //[_writer setMovieFragmentInterval:CMTimeMake(10, 1)];
+    [_writer setMovieFragmentInterval:CMTimeMake(kMovieFragmentLength, 1)];
 }
 
 - (void) finishWithCompletionHandler:(void (^)(void))handler
@@ -65,6 +69,27 @@
 
 - (BOOL) encodeFrame:(CMSampleBufferRef) sampleBuffer isVideo:(BOOL)bVideo
 {
+    double pt = CMTimeGetSeconds(CMSampleBufferGetOutputPresentationTimeStamp(sampleBuffer));
+    
+    if (firstPresentationTime < 0) {
+        firstPresentationTime = pt;
+    }
+    
+    // work around e.g. built-in MacBook camera which returns time since system startup
+    pt -= firstPresentationTime;
+    
+    if (![self startSegmentOutputPresentationTime]) {
+        [self setStartSegmentOutputPresentationTime:pt];
+    }
+    
+    if (pt - [self startSegmentOutputPresentationTime] > [self fragmentLength]) {
+        [self setPrevStartSegmentOutputPresentationTime:[self startSegmentOutputPresentationTime]];
+        [self setEndSegmentOutputPresentationTime:pt];
+        
+        [self setStartSegmentOutputPresentationTime:pt];
+        [self doSegmentation];
+    }
+    
     if (CMSampleBufferDataIsReady(sampleBuffer))
     {
         if (_writer.status == AVAssetWriterStatusUnknown)
@@ -72,11 +97,6 @@
             CMTime startTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
             [_writer startWriting];
             [_writer startSessionAtSourceTime:startTime];
-            if (!self.segmentationTimer) {
-                [self startSegmentationTimer];
-            } else {
-                [self showError:[_writer error]];
-            }
             [self setupQueuedAssetWriter];
         }
         if (_writer.status == AVAssetWriterStatusFailed)
@@ -139,7 +159,7 @@
     });
 }
 
-- (void)doSegmentation:(NSTimer *)timer
+- (void)doSegmentation
 {
     NSLog(@"Segmenting...");
     AVAssetWriter *writer = _writer;
@@ -170,11 +190,6 @@
     });
 }
 
--(void)startSegmentationTimer {
-    self.segmentationTimer = [NSTimer timerWithTimeInterval:(NSTimeInterval)10.0 target:self selector:@selector(doSegmentation:) userInfo:nil repeats:YES];
-    [[NSRunLoop mainRunLoop] addTimer:self.segmentationTimer forMode:NSDefaultRunLoopMode];
-}
-
 -(NSURL *)nextFileURL {
     int FILE_NUMBER = 1;
     
@@ -184,13 +199,6 @@
     NSURL *newMovieURL = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/%@", basePath, movieName]];
     //fileNumber++;
     return newMovieURL;
-}
-
-- (void) dealloc {
-    if (self.segmentationTimer) {
-        [self.segmentationTimer invalidate];
-        self.segmentationTimer = nil;
-    }
 }
 
 
