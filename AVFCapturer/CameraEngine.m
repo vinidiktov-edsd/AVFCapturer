@@ -8,6 +8,7 @@
 
 #import "CameraEngine.h"
 #import "VideoEncoder.h"
+#import "common.h"
 
 static CameraEngine* theEngine;
 
@@ -22,7 +23,6 @@ static CameraEngine* theEngine;
     BOOL _isCapturing;
     BOOL _isPaused;
     BOOL _discont;
-    int _currentFile;
     CMTime _timeOffset;
     CMTime _lastVideo;
     CMTime _lastAudio;
@@ -67,13 +67,13 @@ static CameraEngine* theEngine;
         
         self.isCapturing = NO;
         self.isPaused = NO;
-        _currentFile = 0;
         _discont = NO;
         
         // create capture device with video input
         _session = [[AVCaptureSession alloc] init];
-        AVCaptureDevice* backCamera = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
-        AVCaptureDeviceInput* input = [AVCaptureDeviceInput deviceInputWithDevice:backCamera error:nil];
+        
+        AVCaptureDevice *videoDevice = captureDeviceForAddress(@"usb://0");
+        AVCaptureDeviceInput* input = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:nil];
         [_session addInput:input];
         
         // audio input from default mic
@@ -93,7 +93,7 @@ static CameraEngine* theEngine;
         _videoConnection = [videoout connectionWithMediaType:AVMediaTypeVideo];
 
         // find the actual dimensions used so we can set up the encoder to the same.
-        CMFormatDescriptionRef formatDescription = backCamera.activeFormat.formatDescription;
+        CMFormatDescriptionRef formatDescription = videoDevice.activeFormat.formatDescription;
         CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription);
         CGSize resolution = CGSizeMake((CGFloat)dimensions.width, (CGFloat)dimensions.height);
         
@@ -136,13 +136,7 @@ static CameraEngine* theEngine;
     {
         if (self.isCapturing)
         {
-            NSString* filename = [NSString stringWithFormat:@"capture%d.mp4", _currentFile];
-            NSString* path = [[self getDesktopDirectoryPath] stringByAppendingPathComponent:filename];
-            NSURL* url = [NSURL fileURLWithPath:path];
-            _currentFile++;
-            
             // serialize with audio and video capture
-            
             self.isCapturing = NO;
             dispatch_async(_captureQueue, ^{
                 [_encoder finishWithCompletionHandler:^{
@@ -227,9 +221,7 @@ static CameraEngine* theEngine;
         {
             CMFormatDescriptionRef fmt = CMSampleBufferGetFormatDescription(sampleBuffer);
             [self setAudioFormat:fmt];
-            NSString* filename = [NSString stringWithFormat:@"capture%d.mp4", _currentFile];
-            NSString* path = [[self getDesktopDirectoryPath] stringByAppendingPathComponent:filename];
-            _encoder = [VideoEncoder encoderForPath:path Height:_cy width:_cx channels:_channels samples:_samplerate queue:_captureQueue];
+            _encoder = [VideoEncoder encoderForPath:@"" Height:_cy width:_cx channels:_channels samples:_samplerate queue:_captureQueue];
         }
         if (_discont)
         {
@@ -309,21 +301,8 @@ static CameraEngine* theEngine;
     }];
 }
 
-NSURL *currentMovieURLForAddress(NSString *dbFilename, NSString *cameraAddress)
-{
-    char timestampBuf[128] = {0};
-    
-    time_t curTime = time(NULL);
-    struct tm *ltime = localtime(&curTime);
-    strftime(timestampBuf, sizeof timestampBuf, "%Y-%m-%d__%H-%M-%S", ltime);
-    
-    cameraAddress = [cameraAddress stringByReplacingOccurrencesOfString:@"@" withString:@"_"];
-    cameraAddress = [cameraAddress stringByReplacingOccurrencesOfString:@":" withString:@"_"];
-    cameraAddress = [cameraAddress stringByReplacingOccurrencesOfString:@"/" withString:@""];
-    
-    NSString *movieDir = [dbFilename stringByDeletingLastPathComponent];
-    NSString *filename = [NSString stringWithFormat:@"%@__%s.mov", cameraAddress, timestampBuf];
-    
-    return [NSURL fileURLWithPath:[movieDir stringByAppendingPathComponent:filename]];
-}
+
+
+
+
 @end

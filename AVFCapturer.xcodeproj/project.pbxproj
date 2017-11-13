@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		840B402F1FB2CCD100410139 /* AVSegmentingAppleEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 840B402E1FB2CCD100410139 /* AVSegmentingAppleEncoder.m */; };
+		840B40321FB2CD5900410139 /* AVAppleEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 840B40311FB2CD5900410139 /* AVAppleEncoder.m */; };
+		840B40351FB2CE1800410139 /* AVEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 840B40341FB2CE1800410139 /* AVEncoder.m */; };
 		848EE5851FAC154A00DA1E43 /* CameraEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 848EE5841FAC154A00DA1E43 /* CameraEngine.m */; };
 		848EE58B1FAC195400DA1E43 /* VideoEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 848EE58A1FAC195400DA1E43 /* VideoEncoder.m */; };
 		848EE58E1FAC352500DA1E43 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848EE58D1FAC352500DA1E43 /* AVFoundation.framework */; };
@@ -14,9 +17,16 @@
 		8497609E1FAC0BF80044C681 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8497609D1FAC0BF80044C681 /* main.m */; };
 		849760A01FAC0BF80044C681 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8497609F1FAC0BF80044C681 /* Assets.xcassets */; };
 		849760A31FAC0BF80044C681 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 849760A11FAC0BF80044C681 /* MainMenu.xib */; };
+		84C687C81FB9BE7C00E80152 /* common.m in Sources */ = {isa = PBXBuildFile; fileRef = 84C687C71FB9BE7C00E80152 /* common.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		840B402D1FB2CCD100410139 /* AVSegmentingAppleEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVSegmentingAppleEncoder.h; sourceTree = "<group>"; };
+		840B402E1FB2CCD100410139 /* AVSegmentingAppleEncoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVSegmentingAppleEncoder.m; sourceTree = "<group>"; };
+		840B40301FB2CD5900410139 /* AVAppleEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVAppleEncoder.h; sourceTree = "<group>"; };
+		840B40311FB2CD5900410139 /* AVAppleEncoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVAppleEncoder.m; sourceTree = "<group>"; };
+		840B40331FB2CE1800410139 /* AVEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVEncoder.h; sourceTree = "<group>"; };
+		840B40341FB2CE1800410139 /* AVEncoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVEncoder.m; sourceTree = "<group>"; };
 		848EE5831FAC154A00DA1E43 /* CameraEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraEngine.h; sourceTree = "<group>"; };
 		848EE5841FAC154A00DA1E43 /* CameraEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraEngine.m; sourceTree = "<group>"; };
 		848EE5891FAC195400DA1E43 /* VideoEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoEncoder.h; sourceTree = "<group>"; };
@@ -29,6 +39,8 @@
 		8497609F1FAC0BF80044C681 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		849760A21FAC0BF80044C681 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		849760A41FAC0BF80044C681 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		84C687C61FB9BE7C00E80152 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
+		84C687C71FB9BE7C00E80152 /* common.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = common.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +55,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		840B40361FB2CF1F00410139 /* AVSegementedEncoder */ = {
+			isa = PBXGroup;
+			children = (
+				840B402D1FB2CCD100410139 /* AVSegmentingAppleEncoder.h */,
+				840B402E1FB2CCD100410139 /* AVSegmentingAppleEncoder.m */,
+				840B40301FB2CD5900410139 /* AVAppleEncoder.h */,
+				840B40311FB2CD5900410139 /* AVAppleEncoder.m */,
+				840B40331FB2CE1800410139 /* AVEncoder.h */,
+				840B40341FB2CE1800410139 /* AVEncoder.m */,
+			);
+			name = AVSegementedEncoder;
+			sourceTree = "<group>";
+		};
 		848EE58C1FAC352500DA1E43 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -71,6 +96,8 @@
 		849760981FAC0BF80044C681 /* AVFCapturer */ = {
 			isa = PBXGroup;
 			children = (
+				84C687C61FB9BE7C00E80152 /* common.h */,
+				84C687C71FB9BE7C00E80152 /* common.m */,
 				848EE5891FAC195400DA1E43 /* VideoEncoder.h */,
 				848EE58A1FAC195400DA1E43 /* VideoEncoder.m */,
 				849760991FAC0BF80044C681 /* AppDelegate.h */,
@@ -81,6 +108,7 @@
 				849760A11FAC0BF80044C681 /* MainMenu.xib */,
 				849760A41FAC0BF80044C681 /* Info.plist */,
 				8497609C1FAC0BF80044C681 /* Supporting Files */,
+				840B40361FB2CF1F00410139 /* AVSegementedEncoder */,
 			);
 			path = AVFCapturer;
 			sourceTree = "<group>";
@@ -163,10 +191,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				840B402F1FB2CCD100410139 /* AVSegmentingAppleEncoder.m in Sources */,
 				848EE58B1FAC195400DA1E43 /* VideoEncoder.m in Sources */,
+				840B40321FB2CD5900410139 /* AVAppleEncoder.m in Sources */,
 				8497609E1FAC0BF80044C681 /* main.m in Sources */,
+				84C687C81FB9BE7C00E80152 /* common.m in Sources */,
 				848EE5851FAC154A00DA1E43 /* CameraEngine.m in Sources */,
 				8497609B1FAC0BF80044C681 /* AppDelegate.m in Sources */,
+				840B40351FB2CE1800410139 /* AVEncoder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -50,9 +50,8 @@
 - (void) initPath:(NSString*)path Height:(int) cy width:(int) cx channels: (int) ch samples:(Float64) rate  queue:(dispatch_queue_t) queue;
 - (void) finishWithCompletionHandler:(void (^)(void))handler;
 - (BOOL) encodeFrame:(CMSampleBufferRef) sampleBuffer isVideo:(BOOL) bVideo;
-- (void)doSegmentation;
-- (NSURL *)nextFileURL;
-- (void)startSegmentationTimer;
+- (void) doSegmentation;
+- (NSURL *) nextFileURL;
 - (void) showError:(NSError*)error;
 
 
